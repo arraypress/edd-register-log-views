@@ -13,12 +13,13 @@
 namespace ArrayPress\EDD\Register;
 
 // Exit if accessed directly
-use function edd_logs_view_page;
-
 defined( 'ABSPATH' ) || exit;
 
+use Exception;
+use function edd_logs_view_page;
+
 /**
- * Class Log_Views_Manager
+ * Class LogViewsManager
  *
  * @since 1.0
  */
@@ -34,9 +35,9 @@ class LogViewsManager {
 	/**
 	 * Instance of this class.
 	 *
-	 * @var self
+	 * @var self|null
 	 */
-	private static LogViewsManager $instance;
+	private static ?LogViewsManager $instance = null;
 
 	/**
 	 * Get the instance of this class.
