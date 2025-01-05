@@ -18,7 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ArrayPress\\EDD\\LogViews\\": "src/"
+      "ArrayPress\\EDD\\Register\\": "src/"
     },
     "files": [
       "src/Utilities.php"
