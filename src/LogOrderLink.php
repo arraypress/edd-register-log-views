@@ -14,9 +14,11 @@ declare( strict_types=1 );
 namespace ArrayPress\EDD\Register;
 
 /**
- * Class OrderLogs
+ * Class LogOrderLink
  *
- * @package ArrayPress\EDD\Register\Export
+ * Handles registration and display of order log links in the EDD admin interface.
+ *
+ * @package ArrayPress\EDD\Register
  * @since   1.0.0
  */
 class LogOrderLink {
@@ -50,7 +52,6 @@ class LogOrderLink {
 	 *
 	 * @return self Instance of this class.
 	 * @since 1.0.0
-	 *
 	 */
 	public static function instance(): self {
 		if ( null === self::$instance ) {
@@ -63,27 +64,27 @@ class LogOrderLink {
 	/**
 	 * Register a new log link.
 	 *
-	 * @param array   $args         {
-	 *                              Arguments for registering a log link.
+	 * @param array   $args             {
+	 *                                  Arguments for registering a log link.
 	 *
-	 * @type string   $id           Required. Unique identifier for the log link.
-	 * @type string   $label        Required. Text to display for the link.
-	 * @type string   $view         Required. The log view parameter.
-	 * @type callable $url_callback Optional. Callback to generate custom URL. Default null.
-	 * @type string   $capability   Optional. Required capability to view. Default 'view_shop_reports'.
-	 *                              }
-	 *
+	 * @type string   $id               Required. Unique identifier for the log link.
+	 * @type string   $label            Required. Text to display for the link.
+	 * @type string   $view             Required. The log view parameter.
+	 * @type callable $url_callback     Optional. Callback to generate custom URL. Default null.
+	 * @type callable $display_callback Optional. Callback to determine if link should be displayed. Default null.
+	 * @type string   $capability       Optional. Required capability to view. Default 'view_shop_reports'.
+	 *                                  }
 	 * @return bool True if registered successfully, false otherwise.
 	 * @since 1.0.0
-	 *
 	 */
 	public function register( array $args ): bool {
 		$defaults = [
-			'id'           => '',
-			'label'        => '',
-			'view'         => '',
-			'url_callback' => null,
-			'capability'   => 'view_shop_reports'
+			'id'               => '',
+			'label'            => '',
+			'view'             => '',
+			'url_callback'     => null,
+			'display_callback' => null,
+			'capability'       => 'view_shop_reports'
 		];
 
 		$args = wp_parse_args( $args, $defaults );
@@ -102,7 +103,6 @@ class LogOrderLink {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	public function init(): void {
 		add_action( 'edd_view_order_details_logs_after', [ $this, 'render_log_links' ] );
@@ -115,7 +115,6 @@ class LogOrderLink {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	public function render_log_links( int $order_id ): void {
 		$order = edd_get_order( $order_id );
@@ -125,6 +124,11 @@ class LogOrderLink {
 
 		foreach ( $this->logs as $log ) {
 			if ( ! current_user_can( $log['capability'] ) ) {
+				continue;
+			}
+
+			// Check display callback
+			if ( is_callable( $log['display_callback'] ) && ! call_user_func( $log['display_callback'], $order ) ) {
 				continue;
 			}
 
@@ -152,9 +156,8 @@ class LogOrderLink {
 	 *
 	 * @param array $args Registration arguments.
 	 *
-	 * @return self
+	 * @return self Instance of this class.
 	 * @since 1.0.0
-	 *
 	 */
 	public static function register_log( array $args ): self {
 		$instance = self::instance();
@@ -163,5 +166,4 @@ class LogOrderLink {
 
 		return $instance;
 	}
-
 }
