@@ -7,7 +7,7 @@
  * @package     ArrayPress\EDD\Register\LogViews
  * @copyright   Copyright (c) 2024, ArrayPress Limited
  * @license     GPL2+
- * @since       1.0
+ * @since       1.0.0
  */
 
 namespace ArrayPress\EDD\Register;
@@ -15,13 +15,14 @@ namespace ArrayPress\EDD\Register;
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-use Exception;
 use function edd_logs_view_page;
 
 /**
  * Class LogViewsManager
  *
- * @since 1.0
+ * Manages registration and display of custom log views in Easy Digital Downloads.
+ *
+ * @since 1.0.0
  */
 class LogViewsManager {
 
@@ -29,34 +30,16 @@ class LogViewsManager {
 	 * Registered views
 	 *
 	 * @var array
+	 * @since 1.0.0
 	 */
 	private array $views = [];
 
 	/**
-	 * Instance of this class.
-	 *
-	 * @var self|null
-	 */
-	private static ?LogViewsManager $instance = null;
-
-	/**
-	 * Get the instance of this class.
-	 *
-	 * @return self
-	 */
-	public static function instance(): self {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
-	/**
 	 * Constructor.
+	 *
+	 * @since 1.0.0
 	 */
-	private function __construct() {
-		// Add EDD log view filter
+	public function __construct() {
 		add_filter( 'edd_log_views', array( $this, 'register_views_with_edd' ) );
 	}
 
@@ -75,6 +58,8 @@ class LogViewsManager {
 	 *                          }
 	 *
 	 * @return bool True if registered successfully, false otherwise.
+	 * @since 1.0.0
+	 *
 	 */
 	public function register( array $args ): bool {
 		$defaults = array(
@@ -103,28 +88,13 @@ class LogViewsManager {
 	}
 
 	/**
-	 * Register multiple log views.
-	 *
-	 * @param array  $views     Array of view configurations.
-	 * @param string $base_path Optional base path to prepend to all file paths.
-	 *
-	 * @return void
-	 */
-	public function register_many( array $views, string $base_path = '' ): void {
-		foreach ( $views as $view ) {
-			if ( ! empty( $base_path ) && empty( $view['base_path'] ) ) {
-				$view['base_path'] = $base_path;
-			}
-			$this->register( $view );
-		}
-	}
-
-	/**
 	 * Register views with EDD's log views list.
 	 *
 	 * @param array $views Existing log views.
 	 *
 	 * @return array Modified log views.
+	 * @since 1.0.0
+	 *
 	 */
 	public function register_views_with_edd( array $views ): array {
 		foreach ( $this->views as $id => $view ) {
@@ -140,6 +110,8 @@ class LogViewsManager {
 	 * @param array $args View configuration.
 	 *
 	 * @return void
+	 * @since 1.0.0
+	 *
 	 */
 	private function register_handler( array $args ): void {
 		add_action( "edd_logs_view_{$args['id']}", function () use ( $args ) {

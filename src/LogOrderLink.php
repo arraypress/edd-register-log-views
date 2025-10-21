@@ -2,34 +2,25 @@
 /**
  * Order Logs Registration Class
  *
- * @package     ArrayPress/EDD-Register-Exporters
+ * @package     ArrayPress\EDD\Register\LogViews
  * @copyright   Copyright (c) 2024, ArrayPress Limited
  * @license     GPL2+
- * @version     1.0.0
- * @author      David Sherlock
+ * @since       1.0.0
  */
 
-declare( strict_types=1 );
-
 namespace ArrayPress\EDD\Register;
+
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class LogOrderLink
  *
  * Handles registration and display of order log links in the EDD admin interface.
  *
- * @package ArrayPress\EDD\Register
- * @since   1.0.0
+ * @since 1.0.0
  */
 class LogOrderLink {
-
-	/**
-	 * Instance of this class.
-	 *
-	 * @since 1.0.0
-	 * @var self|null
-	 */
-	private static ?self $instance = null;
 
 	/**
 	 * Array of registered log links.
@@ -44,48 +35,37 @@ class LogOrderLink {
 	 *
 	 * @since 1.0.0
 	 */
-	private function __construct() {
-	}
-
-	/**
-	 * Get instance of this class.
-	 *
-	 * @return self Instance of this class.
-	 * @since 1.0.0
-	 */
-	public static function instance(): self {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+	public function __construct() {
+		add_action( 'edd_view_order_details_logs_after', array( $this, 'render_log_links' ) );
 	}
 
 	/**
 	 * Register a new log link.
 	 *
-	 * @param array   $args             {
-	 *                                  Arguments for registering a log link.
-	 *
-	 * @type string   $id               Required. Unique identifier for the log link.
-	 * @type string   $label            Required. Text to display for the link.
-	 * @type string   $view             Required. The log view parameter.
-	 * @type callable $url_callback     Optional. Callback to generate custom URL. Default null.
-	 * @type callable $display_callback Optional. Callback to determine if link should be displayed. Default null.
-	 * @type string   $capability       Optional. Required capability to view. Default 'view_shop_reports'.
-	 *                                  }
-	 * @return bool True if registered successfully, false otherwise.
 	 * @since 1.0.0
+	 *
+	 * @param array $args {
+	 *     Arguments for registering a log link.
+	 *
+	 *     @type string   $id               Required. Unique identifier for the log link.
+	 *     @type string   $label            Required. Text to display for the link.
+	 *     @type string   $view             Required. The log view parameter.
+	 *     @type callable $url_callback     Optional. Callback to generate custom URL. Default null.
+	 *     @type callable $display_callback Optional. Callback to determine if link should be displayed. Default null.
+	 *     @type string   $capability       Optional. Required capability to view. Default 'view_shop_reports'.
+	 * }
+	 *
+	 * @return bool True if registered successfully, false otherwise.
 	 */
 	public function register( array $args ): bool {
-		$defaults = [
+		$defaults = array(
 			'id'               => '',
 			'label'            => '',
 			'view'             => '',
 			'url_callback'     => null,
 			'display_callback' => null,
 			'capability'       => 'view_shop_reports'
-		];
+		);
 
 		$args = wp_parse_args( $args, $defaults );
 
@@ -99,22 +79,13 @@ class LogOrderLink {
 	}
 
 	/**
-	 * Initialize hooks.
-	 *
-	 * @return void
-	 * @since 1.0.0
-	 */
-	public function init(): void {
-		add_action( 'edd_view_order_details_logs_after', [ $this, 'render_log_links' ] );
-	}
-
-	/**
 	 * Render registered log links.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param int $order_id Order ID.
 	 *
 	 * @return void
-	 * @since 1.0.0
 	 */
 	public function render_log_links( int $order_id ): void {
 		$order = edd_get_order( $order_id );
@@ -135,12 +106,12 @@ class LogOrderLink {
 			if ( is_callable( $log['url_callback'] ) ) {
 				$url = call_user_func( $log['url_callback'], $order );
 			} else {
-				$url = edd_get_admin_url( [
+				$url = edd_get_admin_url( array(
 					'page'     => 'edd-tools',
 					'tab'      => 'logs',
 					'view'     => $log['view'],
 					'customer' => absint( $order->customer_id ),
-				] );
+				) );
 			}
 
 			printf(
@@ -151,19 +122,4 @@ class LogOrderLink {
 		}
 	}
 
-	/**
-	 * Static registration helper.
-	 *
-	 * @param array $args Registration arguments.
-	 *
-	 * @return self Instance of this class.
-	 * @since 1.0.0
-	 */
-	public static function register_log( array $args ): self {
-		$instance = self::instance();
-		$instance->register( $args );
-		$instance->init();
-
-		return $instance;
-	}
 }

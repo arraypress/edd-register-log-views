@@ -1,99 +1,108 @@
 <?php
 /**
- * EDD Log Views Registration Helper
+ * EDD Custom Log Views Registration Helper
  *
- * Provides a simplified interface for registering Easy Digital Downloads log views.
- * This helper function wraps the Log_Views_Manager class to provide a quick way to register
- * multiple log views at once with support for custom capabilities and file locations.
+ * Provides a simplified interface for registering custom Easy Digital Downloads log views.
  *
- * Example usage:
- * ```php
- * $views = [
- *     [
- *         'id'         => 'guest_verifications',
- *         'title'      => 'Guest Verifications',
- *         'class_name' => 'Guest_Verifications_Log_Table',
- *         'file'       => 'class-guest-verifications-log-table.php',
- *         'capability' => 'view_shop_reports'
- *     ]
- * ];
- *
- * register_log_views( $views, dirname(__FILE__) . '/logs' );
- * ```
- *
- * @package     ArrayPress/EDD/Register/LogViews
+ * @package     ArrayPress\EDD\Register\LogViews
  * @copyright   Copyright (c) 2024, ArrayPress Limited
  * @license     GPL2+
- * @version     1.0.0
- * @author      David Sherlock
+ * @since       1.0.0
  */
 
-declare( strict_types=1 );
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
-namespace ArrayPress\EDD\Register;
+use ArrayPress\EDD\Register\LogViewsManager;
+use ArrayPress\EDD\Register\LogOrderLink;
 
-use Exception;
-
-if ( ! function_exists( __NAMESPACE__ . '\\log_views' ) ):
+if ( ! function_exists( 'edd_custom_log_views' ) ):
 	/**
-	 * Helper function to get the Log Views Manager instance.
+	 * Get the Custom Log Views Manager instance.
 	 *
 	 * @return LogViewsManager
+	 * @since 1.0.0
 	 */
-	function log_views(): LogViewsManager {
-		return LogViewsManager::instance();
+	function edd_custom_log_views(): LogViewsManager {
+		static $instance = null;
+		if ( null === $instance ) {
+			$instance = new LogViewsManager();
+		}
+
+		return $instance;
 	}
 endif;
 
-if ( ! function_exists( __NAMESPACE__ . '\\register_log_view' ) ):
+if ( ! function_exists( 'edd_register_custom_log_view' ) ):
 	/**
-	 * Helper function to register a single log view.
+	 * Register a custom log view.
 	 *
-	 * @param array $args View configuration.
+	 * @param array $args       {
+	 *                          View configuration arguments.
 	 *
-	 * @return bool
+	 * @type string $id         Required. Unique identifier for the log view.
+	 * @type string $title      Required. Title displayed in the log views menu.
+	 * @type string $class_name Required. Fully qualified name of the list table class.
+	 * @type string $file       Required. Path to the class file relative to base_path.
+	 * @type string $capability Optional. Required capability to view logs. Default 'view_shop_reports'.
+	 * @type string $base_path  Optional. Base path for class file.
+	 *                          }
+	 *
+	 * @return bool True if registered successfully, false otherwise.
+	 * @since 1.0.0
 	 */
-	function register_log_view( array $args ): bool {
-		return log_views()->register( $args );
+	function edd_register_custom_log_view( array $args ): bool {
+		return edd_custom_log_views()->register( $args );
 	}
 endif;
 
-if ( ! function_exists( __NAMESPACE__ . '\\register_log_views' ) ):
+if ( ! function_exists( 'edd_log_order_links' ) ):
 	/**
-	 * Helper function to register multiple log views.
+	 * Get the Log Order Links Manager instance.
 	 *
-	 * @param array  $views     Array of view configurations.
-	 * @param string $base_path Optional base path for all views.
-	 *
-	 * @return void
+	 * @return LogOrderLink
+	 * @since 1.0.0
 	 */
-	function register_log_views( array $views, string $base_path = '' ): void {
-		log_views()->register_many( $views, $base_path );
+	function edd_log_order_links(): LogOrderLink {
+		static $instance = null;
+		if ( null === $instance ) {
+			$instance = new LogOrderLink();
+		}
+
+		return $instance;
 	}
 endif;
 
-if ( ! function_exists( __NAMESPACE__ . '\\register_log_order_link' ) ):
+if ( ! function_exists( 'edd_register_log_order_link' ) ):
 	/**
-	 * Helper function to register order log links.
+	 * Register an order log link.
+	 *
+	 * Adds a link to the order details page that navigates to a specific log view.
 	 *
 	 * Example usage:
 	 * ```php
-	 * register_order_log([
-	 *     'id'     => 'guest-verifications',
-	 *     'label'  => __('Customer Verifications', 'your-textdomain'),
-	 *     'view'   => 'guest_verifications'
+	 * edd_register_log_order_link([
+	 *     'id'     => 'custom-logs',
+	 *     'label'  => __('Custom Logs', 'your-plugin'),
+	 *     'view'   => 'custom_view'
 	 * ]);
 	 * ```
 	 *
-	 * @param array $args Log link configuration.
+	 * @param array   $args             {
+	 *                                  Log link configuration arguments.
 	 *
-	 * @return LogOrderLink|null Returns OrderLogs instance or null if registration fails.
+	 * @type string   $id               Required. Unique identifier for the log link.
+	 * @type string   $label            Required. Text to display for the link.
+	 * @type string   $view             Required. The log view parameter.
+	 * @type callable $url_callback     Optional. Callback to generate custom URL. Default null.
+	 * @type callable $display_callback Optional. Callback to determine if link should be displayed. Default null.
+	 * @type string   $capability       Optional. Required capability to view. Default 'view_shop_reports'.
+	 *                                  }
+	 *
+	 * @return bool True if registered successfully, false otherwise.
+	 * @since 1.0.0
 	 */
-	function register_log_order_link( array $args ): ?LogOrderLink {
-		try {
-			return LogOrderLink::register_log( $args );
-		} catch ( Exception $e ) {
-			return null;
-		}
+	function edd_register_log_order_link( array $args ): bool {
+		return edd_log_order_links()->register( $args );
 	}
 endif;
