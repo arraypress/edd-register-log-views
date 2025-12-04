@@ -1,6 +1,8 @@
 # EDD Custom Log Views Registration Library
 
-A comprehensive PHP library for registering custom log views and order log links in Easy Digital Downloads. This library provides a robust solution for programmatically creating and managing log views with custom capabilities and flexible organization.
+A comprehensive PHP library for registering custom log views and order log links in Easy Digital Downloads. This library
+provides a robust solution for programmatically creating and managing log views with custom capabilities and flexible
+organization.
 
 ## Features
 
@@ -54,25 +56,25 @@ edd_register_log_order_link( [
 
 ### Custom Log View Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| id | string | Yes | Unique identifier for the log view |
-| title | string | Yes | Display text in the log views menu |
-| class_name | string | Yes | Fully qualified class name for the list table |
-| file | string | Yes | Path to the class file (relative to base path) |
-| capability | string | No | Required capability (defaults to 'view_shop_reports') |
-| base_path | string | No | Custom base path for file location |
+| Option     | Type   | Required | Description                                           |
+|------------|--------|----------|-------------------------------------------------------|
+| id         | string | Yes      | Unique identifier for the log view                    |
+| title      | string | Yes      | Display text in the log views menu                    |
+| class_name | string | Yes      | Fully qualified class name for the list table         |
+| file       | string | Yes      | Path to the class file (relative to base path)        |
+| capability | string | No       | Required capability (defaults to 'view_shop_reports') |
+| base_path  | string | No       | Custom base path for file location                    |
 
 ### Order Log Link Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| id | string | Yes | Unique identifier for the log link |
-| label | string | Yes | Text to display for the link |
-| view | string | Yes | The log view parameter to link to |
-| url_callback | callable | No | Custom callback to generate URL |
-| display_callback | callable | No | Callback to conditionally display link |
-| capability | string | No | Required capability (defaults to 'view_shop_reports') |
+| Option           | Type     | Required | Description                                           |
+|------------------|----------|----------|-------------------------------------------------------|
+| id               | string   | Yes      | Unique identifier for the log link                    |
+| label            | string   | Yes      | Text to display for the link                          |
+| view             | string   | Yes      | The log view parameter to link to                     |
+| url_callback     | callable | No       | Custom callback to generate URL                       |
+| display_callback | callable | No       | Callback to conditionally display link                |
+| capability       | string   | No       | Required capability (defaults to 'view_shop_reports') |
 
 ## Advanced Usage
 
@@ -209,7 +211,8 @@ if ( ! $result ) {
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to
+discuss what you would like to change.
 
 ## License
 

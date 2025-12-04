@@ -21,7 +21,7 @@
       "ArrayPress\\EDD\\Register\\": "src/"
     },
     "files": [
-      "src/Utilities.php"
+      "src/Utilities/Functions.php"
     ]
   },
   "config": {
